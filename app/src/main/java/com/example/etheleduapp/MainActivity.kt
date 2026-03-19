@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
+//setup the 4 navigation routes
 @Composable
 fun AppNav() {
     //obtain navController
@@ -60,6 +60,7 @@ fun AppNav() {
 
 }
 
+//
 @Composable
 fun LandingScreen(navController: NavHostController, modifier: Modifier = Modifier) {
     Scaffold(
