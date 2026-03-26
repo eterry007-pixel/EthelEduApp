@@ -2,6 +2,7 @@
 
 package com.example.etheleduapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,15 +16,17 @@ import com.example.etheleduapp.screen.GameScreen
 import com.example.etheleduapp.screen.LandingScreen
 import com.example.etheleduapp.screen.ScoreScreen
 import com.example.etheleduapp.screen.SettingScreen
+import com.example.etheleduapp.screen.TestDBScreen
 import com.example.etheleduapp.ui.theme.EthelEduAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val currentContext = applicationContext
         setContent {
             EthelEduAppTheme {
-                AppNav()
+                AppNav(currentContext)
                 }
             }
         }
@@ -31,11 +34,11 @@ class MainActivity : ComponentActivity() {
 
 //setup the 4 navigation routes
 @Composable
-fun AppNav() {
+fun AppNav(currentContext: Context) {
     //obtain navController
     val navController = rememberNavController()
     //set the navHost and the routes
-    NavHost(navController, startDestination = "landing"){
+    NavHost(navController, startDestination = "testDB"){
         //define the home route (landing)
         composable("landing"){LandingScreen(navController)
         }
@@ -47,6 +50,10 @@ fun AppNav() {
         }
         //define the score route
         composable("score"){ScoreScreen(navController)
+        }
+        //define the testDB route
+        composable("testDB"){TestDBScreen(currentContext)
+
         }
 
     }
