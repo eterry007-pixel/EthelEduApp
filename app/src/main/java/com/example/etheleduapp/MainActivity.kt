@@ -43,7 +43,7 @@ fun AppNav(currentContext: Context) {
         composable("landing"){LandingScreen(navController)
         }
         //define the activity/game route
-        composable("game"){GameScreen(navController)
+        composable("game"){GameScreen(currentContext, navController)
         }
         //define the setting route
         composable("setting"){SettingScreen(navController)
