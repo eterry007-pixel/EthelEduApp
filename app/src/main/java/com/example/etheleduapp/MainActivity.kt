@@ -43,12 +43,23 @@ fun AppNav(currentContext: Context) {
         //define the home route (landing)
         composable("landing"){LandingScreen(navController) //page 1
         }
+
+        //define the setting route
+        composable("setting/{userName}"){backStackEntry ->
+            // Extract the name from the path. If it's missing, use "Player"
+            val name = backStackEntry.arguments?.getString("userName") ?: "Player"
+
+            SettingScreen(
+                navController = navController,
+                userName = name // Pass the actual name here
+            ) // this is page 2
+        }
+
+
         //define the activity/game route
         composable("game"){GameScreen(currentContext, navController) //page 3
         }
-        //define the setting route
-        composable("setting"){SettingScreen(navController) //page 2
-        }
+
         //define the score route
         composable("score"){ScoreScreen(navController) //page 4
         }
