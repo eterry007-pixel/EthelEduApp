@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.etheleduapp.screen.GameScreen
+import com.example.etheleduapp.screen.ImageDisplayScreen
 import com.example.etheleduapp.screen.LandingScreen
 import com.example.etheleduapp.screen.ScoreScreen
 import com.example.etheleduapp.screen.SettingScreen
@@ -40,22 +41,27 @@ fun AppNav(currentContext: Context) {
     //set the navHost and the routes
     NavHost(navController, startDestination = "testDB"){
         //define the home route (landing)
-        composable("landing"){LandingScreen(navController)
+        composable("landing"){LandingScreen(navController) //page 1
         }
         //define the activity/game route
-        composable("game"){GameScreen(currentContext, navController)
+        composable("game"){GameScreen(currentContext, navController) //page 3
         }
         //define the setting route
-        composable("setting"){SettingScreen(navController)
+        composable("setting"){SettingScreen(navController) //page 2
         }
         //define the score route
-        composable("score"){ScoreScreen(navController)
+        composable("score"){ScoreScreen(navController) //page 4
         }
         //define the testDB route
         composable("testDB"){TestDBScreen(currentContext)
-
         }
-
+        // define the imageDisplay route:
+        composable("imageDisplay") {
+            ImageDisplayScreen(
+                context = currentContext,
+                folder = "1",
+                imageName = "level01_pic01_0.png"
+            )
+        }
     }
-
 }
