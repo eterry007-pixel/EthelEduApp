@@ -39,7 +39,7 @@ fun AppNav(currentContext: Context) {
     //obtain navController
     val navController = rememberNavController()
     //set the navHost and the routes
-    NavHost(navController, startDestination = "testDB"){
+    NavHost(navController, startDestination = "landing"){
         //define the home route (landing)
         composable("landing"){LandingScreen(navController) //page 1
         }

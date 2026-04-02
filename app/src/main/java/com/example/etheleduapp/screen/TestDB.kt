@@ -39,8 +39,8 @@ fun TestDBScreen(currentContext: Context, modifier: Modifier = Modifier) {
     val factory = AppViewModelFactory(db.appDao())
     val viewModel: AppViewModel = viewModel(factory = factory)
     val users by viewModel.users.collectAsStateWithLifecycle(initialValue = emptyList())
-
     var name by remember { mutableStateOf("") }
+
     Column(
         modifier
             .fillMaxSize()
