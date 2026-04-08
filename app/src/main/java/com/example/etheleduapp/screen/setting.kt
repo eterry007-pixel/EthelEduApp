@@ -91,6 +91,7 @@ fun SettingScreen(navController: NavHostController, userName: String = "Player",
 
 
             Button(onClick = {
+                // This sends the folder name (1, 2, or 3) to the next screen
                 navController.navigate("game/$selectedLevel")
             },
                 modifier = Modifier.fillMaxWidth()
