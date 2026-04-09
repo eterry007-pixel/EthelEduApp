@@ -69,7 +69,8 @@ fun LandingScreen(navController: NavHostController, modifier: Modifier = Modifie
                 label = { Text("Enter your name") },
                 placeholder = { Text("e.g. John Doe") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+
             )
 
             // --- Button to navigate and "Save" ---

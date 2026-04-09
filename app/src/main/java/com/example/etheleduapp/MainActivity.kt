@@ -57,8 +57,7 @@ fun AppNav(currentContext: Context) {
 
 
         //define the activity/game route
-
-    // define the activity/game route to accept a level parameter
+        // define the activity/game route to accept a level parameter
         composable("game/{level}") { backStackEntry ->
             // 1. Extract the level (e.g., "1", "2", or "3") from the navigation path
             val selectedLevel = backStackEntry.arguments?.getString("level") ?: "1"

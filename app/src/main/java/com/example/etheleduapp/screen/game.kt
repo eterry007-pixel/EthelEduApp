@@ -2,7 +2,6 @@ package com.example.etheleduapp.screen
 
 import android.content.Context
 import android.media.MediaPlayer
-import com.example.etheleduapp.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.etheleduapp.R
 import com.example.etheleduapp.helper.rememberAssetImage
 
 //Game Screen with a button to navigate to the score screen
@@ -49,13 +49,26 @@ fun GameScreen(
     // This list will store whether each answer was correct (true/false)
     val scoreResults = remember { mutableStateListOf<Boolean>() }
 
+    // Shuffle the images ONCE when the level starts
+    val shuffledImages = remember(level) {
+        try {
+            val files = currentContext.assets.list(level)?.toList() ?: emptyList()
+            // Shuffle the list so the order is random, but fixed for this session
+            files.shuffled()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     //val lever = level //level parameter for the different 3 levels
-    val imageName = remember(level, currentQuestion) {
+    val imageName = remember(shuffledImages, currentQuestion) {
         try {
 
             val files = currentContext.assets.list(level)
-            if (!files.isNullOrEmpty()) {
-                files.random() // Pick a random image from the folder
+            if (shuffledImages.isNotEmpty()) {
+                // Use (currentQuestion - 1) to get index 0, 1, 2, 3, 4
+                // % size ensures we don't crash if totalQuestions > folder size
+                shuffledImages[(currentQuestion - 1) % shuffledImages.size]
             } else {
                 "level01_pic01_0.png" // Default image if the folder is empty
             }
