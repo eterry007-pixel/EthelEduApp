@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,17 +38,31 @@ fun GameScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     level: String,
+    playerName: String
 ) {
 
-    // --- 1. NEW STATE VARIABLES ---
+    // STATE VARIABLES
     var currentQuestion by remember { mutableIntStateOf(1) }
     var userAnswer by remember { mutableStateOf("") }
+
+    // Track if we are showing the result of the current question
+    var isAnswerChecked by remember { mutableStateOf(false) }
+    var isCorrect by remember { mutableStateOf(false) }
+
     val totalQuestions = 5
     //keep time record
     val startTime = remember { System.currentTimeMillis() }
 
     // This list will store whether each answer was correct (true/false)
     val scoreResults = remember { mutableStateListOf<Boolean>() }
+    // TIMER LOGIC
+    var elapsedSeconds by remember { mutableIntStateOf(0) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(1000)
+            elapsedSeconds++
+        }
+    }
 
     // Shuffle the images ONCE when the level starts
     val shuffledImages = remember(level) {
@@ -72,8 +87,8 @@ fun GameScreen(
             } else {
                 "level01_pic01_0.png" // Default image if the folder is empty
             }
-            }catch (e: Exception){
-                "level01_pic01_0.png" // Default image if the folder is empty
+        } catch (e: Exception) {
+            "level01_pic01_0.png" // Default image if the folder is empty
 
         }
     }
@@ -91,79 +106,113 @@ fun GameScreen(
 
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Game Screen - Level $level") }) }
-    ){
-        innerPadding ->
-        Column(modifier
-            .fillMaxSize()
-            .padding(paddingValues = innerPadding)
-            .padding(16.dp)) {
-                // Display progress
-                Text(text = "Question: $currentQuestion / $totalQuestions")
-                Spacer(modifier = Modifier.height(10.dp))
+        topBar = { TopAppBar(title = { Text("$playerName - Level $level") }) }
+    ) { innerPadding ->
+        Column(
+            modifier
+                .fillMaxSize()
+                .padding(paddingValues = innerPadding)
+                .padding(16.dp)
+        ) {
 
-                //Display Image
-                if (imageBitmap != null) {
-                    Image(
-                        bitmap = imageBitmap,
-                        contentDescription = "Image from assets",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                } else {
-                    // Helpful error message if the file is missing in a specific folder
-                    Text(text = "Image not found at: assets/$assetPath")
-                }
+            // 1. Progress Text
+            Text(text = "Question: $currentQuestion / $totalQuestions")
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+            // 2. Image Display
+            if (imageBitmap != null) {
+                Image(
+                    bitmap = imageBitmap,
+                    contentDescription = "Image from assets",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(350.dp), // Slightly reduced height to fit feedback text
+                    contentScale = ContentScale.Fit
+                )
+            } else {
+                Text(text = "Image not found at: assets/$assetPath")
+            }
 
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // --- 3. NEW USER INPUT FIELD ---
+            // 3. Feedback Message (Shows ONLY after clicking Check)
+            if (isAnswerChecked) {
+                val correctValue = imageName.substringBeforeLast(".").substringAfterLast("_")
+                Text(
+                    text = if (isCorrect) "Correct! 🎉 You got 10 points" else "Incorrect!",
+                    style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
+                    color = if (isCorrect) androidx.compose.ui.graphics.Color(0xFF2E7D32) else androidx.compose.ui.graphics.Color.Red
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // 4. Input Field (Disabled after answer is checked)
+
+            // Check if the input is valid (only digits and not empty)
+            val isInputInvalid = userAnswer.isNotEmpty() && !userAnswer.all { it.isDigit()}
             OutlinedTextField(
                 value = userAnswer,
                 onValueChange = { userAnswer = it },
                 label = { Text("What is the answer to this question?") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                enabled = !isAnswerChecked, // Prevents changing answer after checking
+                isError = isInputInvalid, // Display error if invalid
+                supportingText = {
+                    if (isInputInvalid) {
+                        Text(text = "Please enter a valid number.",
+                            color = MaterialTheme.colorScheme.error
+                         )
+                    }
+                },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                )
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-
+            // 5. Action Button (Two-Step: Check then Next)
             Button(
                 onClick = {
-                    // --- LOGIC TO CHECK ANSWER ---
-                    // 1. Extract number from filename (e.g. "level01_pic01_12.png" -> "12")
-                    // We take the part between the last '_' and the '.'
-                    val correctValue = imageName
-                        .substringBeforeLast(".")
-                        .substringAfterLast("_")
+                    if (!isAnswerChecked) {
+                        // --- STEP 1: CHECK ANSWER ---
+                        val correctValue =
+                            imageName.substringBeforeLast(".").substringAfterLast("_")
+                        isCorrect = userAnswer.trim() == correctValue
 
-                    // 2. Compare user input to the extracted number
-                    val isCorrect = userAnswer.trim() == correctValue
-                    scoreResults.add(isCorrect)
+                        playSound(currentContext, isCorrect)
+                        scoreResults.add(isCorrect)
 
-                    // --- NEW: Play the Sound ---
-                    playSound(currentContext, isCorrect)
-
-                    // --- NAVIGATION LOGIC ---
-                    if (currentQuestion < totalQuestions) {
-                        currentQuestion++
-                        userAnswer = ""
+                        isAnswerChecked = true // Show feedback message
                     } else {
-                        // Calculate final score
-                        val timeTaken = (System.currentTimeMillis() - startTime) / 1000
-                        val finalScore = scoreResults.count { it }
-                        // Navigate to score screen and pass the result
-                        navController.navigate("score/$finalScore/$totalQuestions/$timeTaken")
+                        // --- STEP 2: NAVIGATION ---
+                        if (currentQuestion < totalQuestions) {
+                            currentQuestion++
+                            userAnswer = ""
+                            isAnswerChecked = false // Reset for next image
+                        } else {
+                            val timeTaken = (System.currentTimeMillis() - startTime) / 1000
+                            //val finalScore = scoreResults.count { it }
+
+                            // --- NEW: Calculate Points (10 per correct answer) ---
+                            val correctCount = scoreResults.count { it }
+                            val totalPoints = correctCount * 10
+                            navController.navigate("score/$totalPoints/$totalQuestions/$timeTaken/$playerName")
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = userAnswer.isNotBlank()
+                enabled = userAnswer.isNotBlank() && userAnswer.all { it.isDigit() }|| isAnswerChecked
             ) {
-                Text(if (currentQuestion < totalQuestions) "Next Question" else "Finish")
+                Text(
+                    text = when {
+                        !isAnswerChecked -> "Submit"
+                        currentQuestion < totalQuestions -> "Next Question"
+                        else -> "Finish"
+                    }
+                )
             }
         }
     }

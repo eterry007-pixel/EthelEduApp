@@ -27,7 +27,8 @@ fun ScoreScreen(
     modifier: Modifier = Modifier,
     finalScore: String,      // Added parameter
     totalQuestions: String,   // Added parameter
-    timeTaken: String
+    timeTaken: String,
+    userName: String
 ) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Score Screen") }) }
@@ -39,6 +40,14 @@ fun ScoreScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // --- Display User Name ---
+            Text(
+                text = "Well done, $userName!",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 text = "Game Finished!",
                 style = MaterialTheme.typography.headlineMedium
@@ -47,7 +56,7 @@ fun ScoreScreen(
 
             // Display the actual score
             Text(
-                text = "Your Score: $finalScore / $totalQuestions",
+                text = "Your Score: $finalScore points for $totalQuestions questions answered",
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.primary
             )

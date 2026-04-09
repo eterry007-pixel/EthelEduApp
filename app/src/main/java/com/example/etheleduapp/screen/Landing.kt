@@ -46,7 +46,7 @@ fun LandingScreen(navController: NavHostController, modifier: Modifier = Modifie
         verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // --- Welcome Image ---
+            // --- Welcome Screen Logo ---
             Image(
                 painter = painterResource(id = R.drawable.logo_image),
                 contentDescription = "logo_image",
@@ -57,7 +57,7 @@ fun LandingScreen(navController: NavHostController, modifier: Modifier = Modifie
 
             // --- Let's Play Text ---
             Text(
-                text = "Let's play",
+                text = "Let's play!",
                 style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
                 color = androidx.compose.material3.MaterialTheme.colorScheme.secondary
             )

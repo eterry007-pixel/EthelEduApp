@@ -58,30 +58,33 @@ fun AppNav(currentContext: Context) {
 
         //define the activity/game route
         // define the activity/game route to accept a level parameter
-        composable("game/{level}") { backStackEntry ->
+        composable("game/{level}/{userName}") { backStackEntry ->
             // 1. Extract the level (e.g., "1", "2", or "3") from the navigation path
             val selectedLevel = backStackEntry.arguments?.getString("level") ?: "1"
-
+            val name = backStackEntry.arguments?.getString("userName") ?: "Player"
             // 2. Pass that level string into your GameScreen
             GameScreen(
                 currentContext = currentContext,
                 navController = navController,
-                level = selectedLevel // Make sure to update your GameScreen function signature to accept this
+                level = selectedLevel, // Make sure to update your GameScreen function signature to accept this
+                playerName = name
             )
         }
 
         //define the score route
-        composable("score/{finalScore}/{total}/{time}") { backStackEntry ->
+        composable("score/{finalScore}/{total}/{time}/{userName}") { backStackEntry ->
             // Extract the values from the path
             val score = backStackEntry.arguments?.getString("finalScore") ?: "0"
             val total = backStackEntry.arguments?.getString("total") ?: "5"
             val time = backStackEntry.arguments?.getString("time") ?: "0"
+            val name = backStackEntry.arguments?.getString("userName") ?: "Player"
 
             ScoreScreen(
                 navController = navController,
                 finalScore = score,
                 totalQuestions = total,
-                timeTaken = time
+                timeTaken = time,
+                userName = name
             )
         }
         //define the testDB route
