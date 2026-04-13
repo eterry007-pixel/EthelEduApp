@@ -72,19 +72,21 @@ fun AppNav(currentContext: Context) {
         }
 
         //define the score route
-        composable("score/{finalScore}/{total}/{time}/{userName}") { backStackEntry ->
+        composable("score/{finalScore}/{total}/{time}/{userName}/{level}") { backStackEntry ->
             // Extract the values from the path
             val score = backStackEntry.arguments?.getString("finalScore") ?: "0"
             val total = backStackEntry.arguments?.getString("total") ?: "5"
             val time = backStackEntry.arguments?.getString("time") ?: "0"
             val name = backStackEntry.arguments?.getString("userName") ?: "Player"
+            val lvl = backStackEntry.arguments?.getString("level") ?: "1"
 
             ScoreScreen(
                 navController = navController,
                 finalScore = score,
                 totalQuestions = total,
                 timeTaken = time,
-                userName = name
+                userName = name,
+                level = lvl
             )
         }
         //define the testDB route
