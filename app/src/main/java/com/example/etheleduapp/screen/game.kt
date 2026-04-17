@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +45,9 @@ fun GameScreen(
     level: String,
     playerName: String
 ) {
+
+    // scroll state to remember position during rotation
+    val scrollState = rememberScrollState()
 
     // STATE VARIABLES
     var currentQuestion by remember { mutableIntStateOf(1) }
@@ -116,6 +121,8 @@ fun GameScreen(
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding)
                 .padding(16.dp)
+                .verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             // 1. Progress and Timer Row

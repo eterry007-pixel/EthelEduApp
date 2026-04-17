@@ -67,7 +67,7 @@ fun SettingScreen(navController: NavHostController, userName: String = "Player",
                     label = { Text("Level") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     modifier = Modifier
-                        .menuAnchor() // Important for positioning
+                        .menuAnchor() // Enables positioning
                         .fillMaxWidth()
                 )
 
@@ -91,7 +91,7 @@ fun SettingScreen(navController: NavHostController, userName: String = "Player",
 
 
             Button(onClick = {
-                // This sends the folder name (1, 2, or 3) to the next screen
+                // --- Navigate to the game screen with the selected level ---This sends the folder name (1, 2, or 3) to the next screen
                 navController.navigate("game/$selectedLevel/$userName")
             },
                 modifier = Modifier.fillMaxWidth()

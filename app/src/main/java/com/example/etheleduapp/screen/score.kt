@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +48,9 @@ fun ScoreScreen(
     val db = AppDatabase.getDatabase(context)
     val userDao = db.userDao()
 
+    // scroll state to remember position during rotation
+    val scrollState = rememberScrollState()
+
     // 1. Load all past scores from database
     val allUsers by userDao.getAllUsers().collectAsState(initial = emptyList())
 
@@ -69,8 +74,9 @@ fun ScoreScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(8.dp)
+                .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Well done, $userName!", style = MaterialTheme.typography.headlineSmall)
             Text("Current Score: $finalScore pts", style = MaterialTheme.typography.displaySmall, color = MaterialTheme.colorScheme.primary)
